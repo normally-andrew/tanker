@@ -180,9 +180,13 @@ module Tanker
           end  
         end
         # return them in order
-        results = results.map do |result|
+        results = results.map do |result|          
           model, id = result["__type"], result["__id"]
-          id_map[model].detect {|record| id == record.id.to_s }
+          db_record = id_map[model].detect {|record| id == record.id.to_s }
+          if db_record
+            db_record.relevance = result["query_relevance_score"]
+            db_record
+          end
         end
         results.compact
       end
